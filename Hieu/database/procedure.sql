@@ -266,4 +266,14 @@ BEGIN
 END ;
 //
 DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE getUserData(
+	in accountHV char(255),
+    in passwordHV char(255)
+)
+BEGIN
+	SELECT * FROM `hoi vien` WHERE `account`=accountHV and `password` = passwordHV;
+END;
+//
+DELIMITER ;
 
