@@ -20,6 +20,7 @@ function MemberList() {
   //     })
   // }, []);
   // console.log(greetingFromServer);
+  const [memberList, setMemberList] = useState([]);
   const tableData = [
     { name: 1, column1: 'Data 1.1', column2: 'Data 1.2', column3: 'Data 1.3', column4: 'Data 1.4' },
     { name: 2, column1: 'Data 2.1', column2: 'Data 2.2', column3: 'Data 2.3', column4: 'Data 2.4' },
@@ -27,6 +28,9 @@ function MemberList() {
     { name: 4, column1: 'Data 4.1', column2: 'Data 4.2', column3: 'Data 4.3', column4: 'Data 4.4' },
     { name: 5, column1: 'Data 5.1', column2: 'Data 5.2', column3: 'Data 5.3', column4: 'Data 5.4' },
   ];
+  useEffect(() => {
+    setMemberList(tableData);
+  }, [])
   return (
     <>
       <div className="container-md">
@@ -43,7 +47,7 @@ function MemberList() {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((rowData) => (
+            {memberList.length > 0 && memberList.map((rowData) => (
               <tr key={rowData.name}>
                 <td>{rowData.name}</td>
                 <td>{rowData.column1}</td>
