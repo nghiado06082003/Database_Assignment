@@ -10,13 +10,13 @@ import Header from '../shared/header'
 
 const MemberAdd = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    account: '',
+    password: '',
+    memberName: '',
     email: '',
     phoneNumber: '',
-    password: '',
-    confirmPassword: '',
-    additionalInfo: '',
+    level: '',
+    balance: '',
   });
 
   const handleChange = (e) => {
@@ -38,29 +38,43 @@ const MemberAdd = () => {
       <h2>Thêm hội viên</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="firstName" className="form-label">
-            First Name
+          <label htmlFor="account" className="form-label">
+            Tài khoản
           </label>
           <input
             type="text"
             className="form-control"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
+            id="account"
+            name="account"
+            value={formData.account}
             onChange={handleChange}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="lastName" className="form-label">
-            Last Name
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
+          <input
+            type="password"
+            className="form-control"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="memberName" className="form-label">
+            Tên
           </label>
           <input
             type="text"
             className="form-control"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
+            id="memberName"
+            name="memberName"
+            value={formData.memberName}
             onChange={handleChange}
             required
           />
@@ -81,7 +95,7 @@ const MemberAdd = () => {
         </div>
         <div className="mb-3">
           <label htmlFor="phoneNumber" className="form-label">
-            Phone Number
+            Số điện thoại
           </label>
           <input
             type="tel"
@@ -93,52 +107,41 @@ const MemberAdd = () => {
             required
           />
         </div>
+
         <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
+          <label htmlFor="level" className="form-label">
+            Level
           </label>
           <input
-            type="password"
+            type="number"
             className="form-control"
-            id="password"
-            name="password"
-            value={formData.password}
+            id="level"
+            name="level"
+            value={formData.level}
             onChange={handleChange}
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="confirmPassword" className="form-label">
-            Confirm Password
+          <label htmlFor="balance" className="form-label">
+            Số dư
           </label>
           <input
-            type="password"
+            type="number"
             className="form-control"
-            id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
+            id="balance"
+            name="balance"
+            value={formData.balance}
             onChange={handleChange}
             required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="additionalInfo" className="form-label">
-            Additional Information
-          </label>
-          <textarea
-            className="form-control"
-            id="additionalInfo"
-            name="additionalInfo"
-            value={formData.additionalInfo}
-            onChange={handleChange}
           />
         </div>
         <button type="submit" className="btn btn-primary">
-          Submit
+          Thêm hội viên
         </button>
       </form>
     </div>
   );
 };
 
-export default MyFormPage;
+export default MemberAdd;

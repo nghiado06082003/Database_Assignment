@@ -66,94 +66,9 @@ export default function Navbar(props) {
     console.log('Đã đăng xuất');
   }
 
-  let leftNavItem1, leftNavItem2, rightNavItem1, rightNavItem2;
-  // if (authInfo.isAdmin && authInfo.isAdminMode) {
-  //   leftNavItem1 = (
-  //     <li className="nav-item dropdown">
-  //       <NavLink
-  //         className="nav-link dropdown-toggle"
-  //         role="button"
-  //         data-bs-toggle="dropdown"
-  //         aria-expanded="false"
-  //       >
-  //         Quản lý hoạt động
-  //       </NavLink>
-  //       <ul className="dropdown-menu">
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/feed/event">
-  //             Bài viết
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/feed/review">
-  //             Review
-  //           </NavLink>
-  //         </li>
-  //       </ul>
-  //     </li>
-  //   );
-  //   leftNavItem2 = (
-  //     <li className="nav-item dropdown">
-  //       <NavLink
-  //         className="nav-link dropdown-toggle"
-  //         role="button"
-  //         data-bs-toggle="dropdown"
-  //         aria-expanded="false"
-  //       >
-  //         Quản lý tài liệu
-  //       </NavLink>
-  //       <ul className="dropdown-menu">
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/library">
-  //             Hội viên
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/documentManagement/loan">
-  //             Mượn sách
-  //           </NavLink>
-  //         </li>
-  //       </ul>
-  //     </li>
-  //   );
-  //   rightNavItem1 = (
-  //     <li className="nav-item">
-  //       <NavLink className="nav-link" to="/memberManagement">
-  //         Quản lý thành viên
-  //       </NavLink>
-  //     </li>
-  //   );
-  //   rightNavItem2 = (
-  //     <li className="nav-item dropdown">
-  //       <NavLink
-  //         className="nav-link dropdown-toggle"
-  //         role="button"
-  //         data-bs-toggle="dropdown"
-  //         aria-expanded="false"
-  //       >
-  //         Thông tin
-  //       </NavLink>
-  //       <ul className="dropdown-menu">
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/">
-  //             Người dùng
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my">
-  //             Thông tin cá nhân
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <button className="dropdown-item" onClick={handleSignOut}>
-  //             Đăng xuất
-  //           </button>
-  //         </li>
-  //       </ul>
-  //     </li>
-  //   );
-  // }
-  leftNavItem1 = (
+  let navItem1, navItem2, rightNavItem1, rightNavItem2;
+
+  navItem1 = (
     <li className="nav-item dropdown">
       <NavLink
         className="nav-link dropdown-toggle"
@@ -177,7 +92,7 @@ export default function Navbar(props) {
       </ul>
     </li>
   );
-  leftNavItem2 = (
+  navItem2 = (
     <li className="nav-item dropdown">
       <NavLink
         className="nav-link dropdown-toggle"
@@ -198,85 +113,55 @@ export default function Navbar(props) {
             Thêm khuyến mãi
           </NavLink>
         </li>
+        <li>
+          <NavLink className="dropdown-item" to="/discount/discountForProduct">
+            Tìm khuyến mãi cho sản phẩm
+          </NavLink>
+        </li>
       </ul>
     </li>
   );
-
-  // if (authInfo.isLogin) {
-  //   rightNavItem1 = (
-  //     <li className="nav-item">
-  //       <NavLink className="nav-link" to="/bookBorrow">
-  //         Mượn sách
-  //       </NavLink>
-  //     </li>
-  //   );
-  //   rightNavItem2 = (
-  //     <li className="nav-item dropdown">
-  //       <NavLink
-  //         className="nav-link dropdown-toggle"
-  //         role="button"
-  //         data-bs-toggle="dropdown"
-  //         aria-expanded="false"
-  //       >
-  //         Thông tin
-  //       </NavLink>
-  //       <ul className="dropdown-menu">
-  //         {authInfo.isAdmin && !authInfo.isAdminMode &&
-  //           <li>
-  //             <NavLink className="dropdown-item" to="/">
-  //               Trang quản trị viên
-  //             </NavLink>
-  //           </li>
-  //         }
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my">
-  //             Thông tin cá nhân
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my/borrow/list">
-  //             Danh sách đăng kí mượn
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my/borrow/history">
-  //             Lịch sử mượn
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my/feed/review">
-  //             Sách đã quyên góp
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <NavLink className="dropdown-item" to="/my/post/reviewHistory">
-  //             Danh sách review đã gửi
-  //           </NavLink>
-  //         </li>
-  //         <li>
-  //           <button className="dropdown-item" onClick={handleSignOut}>
-  //             Đăng xuất
-  //           </button>
-  //         </li>
-  //       </ul>
-  //     </li>
-  //   );
-  // }
-  // else {
-  // rightNavItem1 = (
-  //   <li className="nav-item">
-  //     <NavLink className="nav-link" to="/signup">
-  //       Đăng kí
-  //     </NavLink>
-  //   </li>
-  // );
-  // rightNavItem2 = (
-  //   <li className="nav-item">
-  //     <NavLink className="nav-link" to="/signin">
-  //       Đăng nhập
-  //     </NavLink>
-  //   </li>
-  // );
+  let navItem3 = (
+    <li className="nav-item dropdown">
+      <NavLink
+        className="nav-link dropdown-toggle"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Hoá đơn
+      </NavLink>
+      <ul className="dropdown-menu">
+        <li>
+          <NavLink className="dropdown-item" to="/bill/createBill">
+            Tạo hoá đơn
+          </NavLink>
+        </li>
+      </ul>
+    </li>
+  );
+  let navItem4 = (
+    <li className="nav-item dropdown">
+      <NavLink
+        className="nav-link dropdown-toggle"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Dịch vụ khác cho lễ tân
+      </NavLink>
+      <ul className="dropdown-menu">
+        <li>
+          <NavLink className="dropdown-item" to="/otherService/storeSupervise">
+            Giám sát cửa hàng
+          </NavLink>
+          <NavLink className="dropdown-item" to="/otherService/computerPriceLookup">
+            Tìm giá và phụ thu máy tính
+          </NavLink>
+        </li>
+      </ul>
+    </li>
+  );
 
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -297,8 +182,10 @@ export default function Navbar(props) {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            {leftNavItem1}
-            {leftNavItem2}
+            {navItem1}
+            {navItem2}
+            {navItem3}
+            {navItem4}
           </ul>
         </div>
       </div>
