@@ -276,4 +276,38 @@ BEGIN
 END;
 //
 DELIMITER ;
+drop procedure if exists UpdateHoiVienRecord;
+DELIMITER //
+CREATE PROCEDURE UpdateHoiVienRecord(
+    IN p_account CHAR(255),
+    IN `old_password` CHAR(255),
+    IN p_password CHAR(255),
+    IN p_ten CHAR(255),
+    IN p_sdt CHAR(10),
+    IN p_email CHAR(255),
+    IN p_level INT
+)
+BEGIN
+    -- Update a record in the Hoi Vien table
+    UPDATE `Hoi Vien`
+    SET
+        `password` = p_password,
+        `ten` = p_ten,
+        `sdt` = p_sdt,
+        `email` = p_email,
+        `level` = p_level
+    WHERE
+        `account` = p_account
+        and `password` = `old_password`;
+END; //
+DELIMITER ;
+DELIMITER //
+CREATE PROCEDURE getPassword(
+	in p_account char(255)
+)
+BEGIN
+	select `password` from `hoi vien` where `account` = p_account;
+END;
+//
+DELIMITER ;
 

@@ -5,7 +5,9 @@ values
 (2,15000,'mi tom'),
 (3, 50000,'card viettel');
 insert into `Gio Choi` (`ma san pham`) values (1);
-insert into `Hoi Vien` (`account`, `ten`,`email`,`password`,`sdt`) values ('hieudz1402','The Hieu','abc@abc.abc','123','113');
+insert into `Hoi Vien` (`account`, `ten`,`email`,`password`,`sdt`) values
+('hahaha','khach','io@hcmut.edu.vn','$2a$12$z.RpqTSe07c5UkPv2a0gXuva4CqyNYlAaafi7kws.Vf0mVnzAIBSG','0909'),
+('hieudz1402','The Hieu','abc@abc.abc','$2a$12$z.RpqTSe07c5UkPv2a0gXuva4CqyNYlAaafi7kws.Vf0mVnzAIBSG','113');
 insert into `nhan vien` (`ho ten`,`gioi tinh`,`ngay sinh`,`ngay ki ket`,`ngay het han`) values ('nhanvien1', 1, '2003-01-01', '2023-01-01', '2024-01-01');
 insert into `Le Tan` (id, `account`, `password`,`lich truc`) values (1,'nhanvien1','123','thu 2 thu 3 thu 4');
 insert into `Hoa Don` (`ma hoa don`,`ngay thuc hien`,`tai khoan hv`,`id le tan`) values (1,NOW(),'hieudz1402',1);
