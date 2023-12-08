@@ -2,13 +2,14 @@ drop schema if exists `internet_store`;
 CREATE SCHEMA IF NOT EXISTS `internet_store`;
 USE `internet_store`;
 CREATE TABLE IF NOT EXISTS `Cau Hinh` (
-    ID INT NOT NULL PRIMARY KEY,
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `kich thuoc man hinh` FLOAT NOT NULL,
     `cpu` CHAR(255) NOT NULL,
     `card do hoa` CHAR(255) NOT NULL,
     ram INT NOT NULL,
     `tan so man hinh` INT NOT NULL,
-    gia INT NOT NULL
+    gia INT NOT NULL,
+    check (gia > 0 and ram>4 and `kich thuoc man hinh`>20 and `tan so man hinh` >= 60)
 );
 CREATE TABLE IF NOT EXISTS `Khu Vuc` (
     `loai khu vuc` CHAR(255) NOT NULL PRIMARY KEY,
