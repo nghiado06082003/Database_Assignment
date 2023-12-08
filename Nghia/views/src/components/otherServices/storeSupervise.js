@@ -9,41 +9,26 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const StoreSupervise = () => {
-    // Example session data, replace with your actual session data
-    const sessionData = [
-        { id: 1, startTime: '2023-01-01T10:00:00', computerId: 'A001', memberId: 'M001' },
-        { id: 2, startTime: '2023-01-02T15:30:00', computerId: 'A002', memberId: 'M002' },
-        { id: 3, startTime: '2023-01-03T12:45:00', computerId: 'A003', memberId: 'M003' },
-        { id: 4, startTime: '2023-01-04T12:45:00', computerId: 'A004', memberId: 'M004' },
-        { id: 5, startTime: '2023-01-05T12:45:00', computerId: 'A005', memberId: 'M005' },
-        { id: 6, startTime: '2023-01-06T12:45:00', computerId: 'A006', memberId: 'M006' },
-        // Add more session items as needed
-    ];
-
     const [memberSearchKey, setMemberSearchKey] = useState('');
     const [computerSearchKey, setComputerSearchKey] = useState('');
     const [sessionList, setSessionList] = useState([]);
 
     useEffect(() => {
-        setSessionList(sessionData);
+        axios.post("/api/otherServices/sessionList", {})
+            .then((response) => { setSessionList(response.data.sessionList) })
+            .catch((error) => { });
     }, []);
 
     const handleMemberSearch = () => {
-        const results = sessionData.filter(
-            (session) =>
-                session.memberId.includes(memberSearchKey)
-        );
-
-        setSessionList(results);
+        axios.post("/api/otherServices/sessionSearchByMember", { memberId: memberSearchKey })
+            .then((response) => { setSessionList(response.data.sessionList) })
+            .catch((error) => { });
     };
 
     const handleComputerSearch = () => {
-        const results = sessionData.filter(
-            (session) =>
-                session.computerId.includes(computerSearchKey)
-        );
-
-        setSessionList(results);
+        axios.post("/api/otherServices/sessionSearchByComputer", { computerId: computerSearchKey })
+            .then((response) => { setSessionList(response.data.sessionList) })
+            .catch((error) => { });
     };
 
     return (

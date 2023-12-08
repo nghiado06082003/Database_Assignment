@@ -10,7 +10,7 @@ import Header from '../shared/header'
 
 const DiscountAdd = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        discountName: '',
         description: '',
         startDate: '',
         endDate: '',
@@ -30,10 +30,12 @@ const DiscountAdd = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         // Add your logic for submitting the new discount data
-        console.log('New Discount Submitted:', formData);
+        axios.post("/api/discount/add", { ...formData })
+            .then((response) => { console.log(response.data.message) })
+            .catch((error) => { });
         // Reset the form after submission
         setFormData({
-            name: '',
+            discountName: '',
             description: '',
             startDate: '',
             endDate: '',
@@ -48,15 +50,15 @@ const DiscountAdd = () => {
             <h2>Thêm chương trình khuyến mãi mới</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                    <label htmlFor="name" className="form-label">
+                    <label htmlFor="discountName" className="form-label">
                         Tên chương trình
                     </label>
                     <input
                         type="text"
                         className="form-control"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="discountName"
+                        name="discountName"
+                        value={formData.discountName}
                         onChange={handleChange}
                         required
                     />

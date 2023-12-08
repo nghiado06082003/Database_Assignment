@@ -10,33 +10,11 @@ import Header from '../shared/header'
 
 const DiscountList = () => {
     const [discountList, setDiscountList] = useState([]);
-    // Example data, replace with your actual data
-    const discountData = [
-        {
-            id: 1,
-            discountName: 'Summer Sale',
-            description: 'Enjoy discounts on summer items',
-            startDate: '2023-06-01',
-            endDate: '2023-06-30',
-            condition: 'Applicable on selected items',
-            category: 'Seasonal',
-            discountValue: '20%',
-        },
-        {
-            id: 2,
-            discountName: 'Autumn Sale',
-            description: 'Enjoy discounts on autumn items',
-            startDate: '2023-09-01',
-            endDate: '2023-09-30',
-            condition: 'No condition is required',
-            category: 'Seasonal',
-            discountValue: '30%',
-        },
-        // Add more discount items as needed
-    ];
 
     useEffect(() => {
-        setDiscountList(discountData);
+        axios.post("/api/discount/list", {})
+            .then((response) => { setDiscountList(response.data.discountList) })
+            .catch((error) => { })
     }, [])
 
     const handleEdit = (id) => {

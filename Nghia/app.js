@@ -12,6 +12,10 @@ const homepageRoute = require('./routes/homepage');
 const signinRoute = require('./routes/signin');
 const authorizationRoute = require("./routes/authorization");
 const registrationRoute = require("./routes/registration");
+const memberRoute = require("./routes/member");
+const discountRoute = require("./routes/discount");
+const billRoute = require("./routes/bill");
+const otherServicesRoute = require("./routes/otherServices");
 
 
 const limiter = rateLimit({
@@ -50,6 +54,14 @@ app.use("/api/signin", signinRoute);
 app.use("/api/authorization", authorizationRoute);
 
 app.use("/api/register", registrationRoute);
+
+app.use("/api/member", memberRoute);
+
+app.use("/api/discount", discountRoute);
+
+app.use("/api/bill", billRoute);
+
+app.use("/api/otherServices", otherServicesRoute);
 
 
 

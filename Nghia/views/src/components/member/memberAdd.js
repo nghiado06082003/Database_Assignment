@@ -12,11 +12,9 @@ const MemberAdd = () => {
   const [formData, setFormData] = useState({
     account: '',
     password: '',
-    memberName: '',
+    name: '',
     email: '',
     phoneNumber: '',
-    level: '',
-    balance: '',
   });
 
   const handleChange = (e) => {
@@ -29,8 +27,9 @@ const MemberAdd = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your form submission logic here
-    console.log('Form submitted:', formData);
+    axios.post("/api/member/add", { ...formData })
+      .then((response) => { console.log(response.data.message) })
+      .catch((err) => { })
   };
 
   return (
@@ -73,8 +72,8 @@ const MemberAdd = () => {
             type="text"
             className="form-control"
             id="memberName"
-            name="memberName"
-            value={formData.memberName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             required
           />
@@ -103,35 +102,6 @@ const MemberAdd = () => {
             id="phoneNumber"
             name="phoneNumber"
             value={formData.phoneNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="level" className="form-label">
-            Level
-          </label>
-          <input
-            type="number"
-            className="form-control"
-            id="level"
-            name="level"
-            value={formData.level}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="balance" className="form-label">
-            Số dư
-          </label>
-          <input
-            type="number"
-            className="form-control"
-            id="balance"
-            name="balance"
-            value={formData.balance}
             onChange={handleChange}
             required
           />

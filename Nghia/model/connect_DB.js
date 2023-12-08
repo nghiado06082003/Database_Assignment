@@ -4,13 +4,13 @@
     When you want to change to a real DB, you should export only the connection variable and no function.
     All APIs to access to the DB should be specified in distict JS files according to the model that each file is representing.
 */
-var mysql = require("mysql")
+var mysql = require("mysql2")
 
 var connect_DB = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "",
-    database: "simbsc"
+    password: "12090608",
+    database: "internet_store"
 });
 
 connect_DB.connect(function(err) {

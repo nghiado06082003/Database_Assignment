@@ -20,15 +20,6 @@ const CreateBill = () => {
     const [quantityProduct, setQuantityProduct] = useState(1);
     const [submittedBill, setSubmittedBill] = useState(null);
 
-    // Example product data, replace with your actual product data
-    const productData = [
-        { id: 1, name: 'Laptop', price: 1200 },
-        { id: 2, name: 'Smartphone', price: 800 },
-        { id: 3, name: 'Tablet', price: 300 },
-        { id: 4, name: 'Headphones', price: 80 },
-        // Add more product items as needed
-    ];
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -39,48 +30,37 @@ const CreateBill = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-
-        // Perform a simple string comparison for demonstration
-        const results = productData.filter(
-            (item) =>
-                item.name.toLowerCase().includes(searchKey.toLowerCase()) ||
-                String(item.price).includes(searchKey)
-        );
-
-        setSearchResults(results);
+        axios.post("/api/bill/getProduct", { productName: searchKey })
+            .then((response) => { setSearchResults(response.data.productList) })
+            .catch((error) => { });
     };
 
-    const handleAddProduct = (productId) => {
-        const selectedProduct = productData.find((product) => product.id === productId);
+    const handleAddProduct = (productId, productName, productPrice) => {
+        setAddedProducts((prevProducts) => [
+            ...prevProducts,
+            {
+                productId: productId,
+                quantity: quantityProduct,
+                name: productName,
+                price: productPrice,
+                intoPrice: productPrice * quantityProduct
+            },
+        ]);
+        setQuantityProduct(1);
 
-        if (selectedProduct) {
-            setAddedProducts((prevProducts) => [
-                ...prevProducts,
-                {
-                    id: selectedProduct.id,
-                    name: selectedProduct.name,
-                    price: selectedProduct.price,
-                    quantity: quantityProduct,
-                    intoPrice: selectedProduct.price * quantityProduct
-                },
-            ]);
-            setQuantityProduct(1);
-        }
     };
 
     const handleFormSubmit = (e) => {
         e.preventDefault();
-        // Add your logic to submit the form data along with the added products
-        console.log('Form Data:', formData);
-        console.log('Added Products:', addedProducts);
-        setSubmittedBill({
-            id: 666,
-            memberId: formData.memberId,
-            employeeId: formData.employeeId,
-            date: "01/01/2023",
-            totalPrice: "Có Backend lấy từ đó sau",
-            productList: addedProducts
-        })
+        axios.post("/api/bill/createBill", { ...formData, productList: addedProducts })
+            .then((respond) => {
+                axios.post("/api/bill/getBillDetail", { bill_id: respond.data.createdBillId })
+                    .then((respond) => {
+                        setSubmittedBill(respond.data.billDetail);
+                    })
+                    .catch((error) => { })
+            })
+            .catch((error) => { })
 
         // Reset the form and added products after submission
         setFormData({
@@ -149,15 +129,17 @@ const CreateBill = () => {
                             <th>ID</th>
                             <th>Tên sản phẩm</th>
                             <th>Giá</th>
+                            <th>Số lượng trong kho</th>
                             <th>Số lượng cần mua</th>
                         </tr>
                     </thead>
                     <tbody>
                         {searchResults.map((result) => (
-                            <tr key={result.id}>
-                                <td>{result.id}</td>
+                            <tr key={result.productId}>
+                                <td>{result.productId}</td>
                                 <td>{result.name}</td>
                                 <td>{result.price}</td>
+                                <td>{result.instock}</td>
                                 <td>
                                     <input
                                         type="number"
@@ -167,7 +149,7 @@ const CreateBill = () => {
                                     <button
                                         type="button"
                                         className="btn btn-success btn-sm"
-                                        onClick={() => handleAddProduct(result.id)}
+                                        onClick={() => handleAddProduct(result.productId, result.name, result.price)}
                                     >
                                         Thêm sản phẩm
                                     </button>
@@ -188,15 +170,15 @@ const CreateBill = () => {
                             <tr>
                                 <th>ID</th>
                                 <th>Tên sản phẩm</th>
-                                <th>Giá</th>
+                                <th>Giá niêm yết</th>
                                 <th>Số lượng cần mua</th>
-                                <th>Thành tiền</th>
+                                <th>Thành tiền tạm tính (chưa áp dụng khuyến mãi)</th>
                             </tr>
                         </thead>
                         <tbody>
                             {addedProducts.map((addedProduct) => (
-                                <tr key={addedProduct.id}>
-                                    <td>{addedProduct.id}</td>
+                                <tr key={addedProduct.productId}>
+                                    <td>{addedProduct.productId}</td>
                                     <td>{addedProduct.name}</td>
                                     <td>{addedProduct.price}</td>
                                     <td>{addedProduct.quantity}</td>
@@ -215,26 +197,24 @@ const CreateBill = () => {
                     <p>Hội viên: {submittedBill.memberId}</p>
                     <p>Lễ tân: {submittedBill.employeeId}</p>
                     <p>Ngày thực hiện: {submittedBill.date}</p>
-                    <p>Tổng tiền: {submittedBill.totalPrice}</p>
+                    <p>Tổng tiền (đã áp dụng các khuyến mãi): {submittedBill.totalPrice}</p>
                     <h5>Các sản phẩm đã mua</h5>
                     <table className="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Tên sản phẩm</th>
-                                <th>Giá</th>
+                                <th>Giá niêm yết</th>
                                 <th>Số lượng cần mua</th>
-                                <th>Thành tiền</th>
                             </tr>
                         </thead>
                         <tbody>
                             {submittedBill.productList.map((productInBill) => (
-                                <tr key={productInBill.id}>
-                                    <td>{productInBill.id}</td>
+                                <tr key={productInBill.productId}>
+                                    <td>{productInBill.productId}</td>
                                     <td>{productInBill.name}</td>
                                     <td>{productInBill.price}</td>
                                     <td>{productInBill.quantity}</td>
-                                    <td>{productInBill.intoPrice}</td>
                                 </tr>
                             ))}
                         </tbody>

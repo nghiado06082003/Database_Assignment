@@ -9,25 +9,13 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const ComputerPriceLookup = () => {
-    // Example product data, replace with your actual product data
-    const computerData = [
-        { id: 1, price: 10000, additionalCharge: 1200 },
-        { id: 2, price: 20000, additionalCharge: 800 },
-        { id: 3, price: 30000, additionalCharge: 300 },
-        { id: 4, price: 40000, additionalCharge: 80 },
-        { id: 5, price: 50000, additionalCharge: 900 },
-        { id: 6, price: 60000, additionalCharge: 40 },
-        // Add more product items as needed
-    ];
-
     const [computerId, setComputerId] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
     const handleSearch = () => {
-        const results = computerData.filter(
-            (computer) => computer.id.toString().includes(computerId)
-        );
-        setSearchResults(results);
+        axios.post("/api/otherServices/getComputerPrice", { computerId: computerId })
+            .then((response) => { setSearchResults(response.data.priceList) })
+            .catch((error) => { })
     };
 
     return (

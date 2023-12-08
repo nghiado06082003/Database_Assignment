@@ -9,26 +9,15 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const DiscountForProduct = () => {
-    // Example product data, replace with your actual product data
-    const productData = [
-        { id: 1, condition: 'Laptop', discountValue: 1200 },
-        { id: 1, condition: 'Smartphone', discountValue: 800 },
-        { id: 4, condition: 'Tablet', discountValue: 300 },
-        { id: 4, condition: 'Headphones', discountValue: 80 },
-        { id: 9, condition: 'PC', discountValue: 900 },
-        { id: 9, condition: 'Smartwatch', discountValue: 40 },
-        // Add more product items as needed
-    ];
-
     const [productId, setProductId] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
     const handleSearch = () => {
-        console.log(productId);
-        const results = productData.filter(
-            (product) => product.id.toString().includes(productId)
-        );
-        setSearchResults(results);
+        axios.post("/api/discount/forProduct", { productId: productId })
+            .then((response) => {
+                setSearchResults(response.data.discountForProduct)
+            })
+            .catch((error) => { })
     };
 
     return (
