@@ -208,12 +208,13 @@ END;
 //
 
 DELIMITER ;
+DROP PROCEDURE IF EXISTS thongKeKhuyenMai;
 DELIMITER //
 CREATE PROCEDURE thongKeKhuyenMai(
 	in ma_khuyen_mai int
 )
 BEGIN
-	Select ct.`ma san pham`, ct.`so luong`
+	Select ct.`ma san pham`, ct.`so luong`,ct.`ma hoa don`
     from `hoa don` as hd natural join
 	(SELECT *
 	FROM chua as c natural join
@@ -310,5 +311,27 @@ BEGIN
 END;
 //
 DELIMITER ;
-
+DELIMITER //
+CREATE PROCEDURE thongKeSPKhuyenMai(
+	in ma_khuyen_mai int
+)
+BEGIN
+	Select `ma san pham`, `ten san pham`, `so luong`
+    from `san pham` as sp natural join
+	(Select ct.`ma san pham`, ct.`so luong`
+    from `hoa don` as hd natural join
+	(SELECT *
+	FROM chua as c natural join
+	(SELECT km.`ngay bat dau`, km.`ngay ket thuc`,adsp.`ma san pham` 
+    from `khuyen mai` AS km 
+    natural join `ap dung san pham` as adsp
+    where  km.`ma khuyen mai`= ma_khuyen_mai and km.`ma khuyen mai` = adsp.`ma khuyen mai`) as spkm
+	where spkm.`ma san pham` = c.`ma san pham`) AS ct
+    where hd.`ma hoa don` = ct.`ma hoa don` 
+    and hd.`ngay thuc hien` >= ct.`ngay bat dau` 
+    and hd.`ngay thuc hien` <= ct.`ngay ket thuc`) as kq
+    where sp.`ma san pham` = kq.`ma san pham`;
+END;
+//
+DELIMITER ;
 

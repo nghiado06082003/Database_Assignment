@@ -80,7 +80,7 @@ CALL addProductToBill(3,5,3);
 CALL addProductToBill(1,1,4);
 CALL addProductToBill(1,4,5);
 CALL addProductToBill(1,3,6);
-CALL addProductToBill(4,10,6);
+CALL addProductToBill(4,1,6);
 CALL addProductToBill(1,10,7);
 CALL addProductToBill(2,10,7);
 CALL addProductToBill(3,10,7);
