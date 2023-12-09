@@ -9,57 +9,58 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const StoreSupervise = () => {
-    const [memberSearchKey, setMemberSearchKey] = useState('');
-    const [computerSearchKey, setComputerSearchKey] = useState('');
+    const [memberSearchKey, setMemberSearchKey] = useState(null);
+    const [computerSearchKey, setComputerSearchKey] = useState(null);
     const [sessionList, setSessionList] = useState([]);
+    const [errMessage, setErrMessage] = useState(null);
 
     useEffect(() => {
         axios.post("/api/otherServices/sessionList", {})
-            .then((response) => { setSessionList(response.data.sessionList) })
-            .catch((error) => { });
+            .then((response) => { setSessionList(response.data.sessionList); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message) });
     }, []);
 
     const handleMemberSearch = () => {
         axios.post("/api/otherServices/sessionSearchByMember", { memberId: memberSearchKey })
-            .then((response) => { setSessionList(response.data.sessionList) })
-            .catch((error) => { });
+            .then((response) => { setSessionList(response.data.sessionList); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message) });
     };
 
     const handleComputerSearch = () => {
         axios.post("/api/otherServices/sessionSearchByComputer", { computerId: computerSearchKey })
-            .then((response) => { setSessionList(response.data.sessionList) })
-            .catch((error) => { });
+            .then((response) => { setSessionList(response.data.sessionList); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message) });
     };
 
     return (
         <div className="container mt-4">
             <h2>Giám sát cửa hàng</h2>
             <h6>Trang này cung cấp thông tin về hội viên nào đang sử dụng máy nào</h6>
-
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <div className="mb-3">
                 <input
                     type="text"
                     className="form-control"
-                    placeholder="Tìm theo mã hội viên..."
+                    placeholder="Tìm theo tài khoản hội viên..."
                     value={memberSearchKey}
-                    onChange={(e) => setMemberSearchKey(e.target.value)}
+                    onChange={(e) => setMemberSearchKey(e.target.value == '' ? null : e.target.value)}
                 />
                 <button
                     type="button"
                     className="btn btn-success btn-sm"
                     onClick={() => handleMemberSearch()}
                 >
-                    Tìm theo mã hội viên
+                    Tìm theo tài khoản hội viên
                 </button>
             </div>
 
             <div className="mb-3">
                 <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     placeholder="Tìm theo mã máy tính..."
                     value={computerSearchKey}
-                    onChange={(e) => setComputerSearchKey(e.target.value)}
+                    onChange={(e) => setComputerSearchKey(e.target.value == '' ? null : e.target.value)}
                 />
                 <button
                     type="button"

@@ -8,7 +8,7 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ memberList: result });
+                res.json({ memberList: result[0] });
             }
         })
     },

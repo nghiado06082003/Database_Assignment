@@ -9,26 +9,27 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const ComputerPriceLookup = () => {
-    const [computerId, setComputerId] = useState('');
+    const [computerId, setComputerId] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
+    const [errMessage, setErrMessage] = useState(null);
 
     const handleSearch = () => {
         axios.post("/api/otherServices/getComputerPrice", { computerId: computerId })
-            .then((response) => { setSearchResults(response.data.priceList) })
-            .catch((error) => { })
+            .then((response) => { setSearchResults(response.data.priceList); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message) })
     };
 
     return (
         <div className="container mt-4">
             <h2>Truy vấn giá và phụ thu cho máy</h2>
-
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <div className="mb-3">
                 <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     placeholder="Mã máy cần tìm thông tin..."
                     value={computerId}
-                    onChange={(e) => setComputerId(e.target.value)}
+                    onChange={(e) => setComputerId(e.target.value == '' ? null : e.target.value)}
                 />
                 <button
                     type="button"

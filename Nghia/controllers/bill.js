@@ -7,7 +7,7 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ productList: result });
+                res.json({ productList: result[0] });
             }
         })
     },
@@ -21,7 +21,7 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                let bill_id = result.insertId;
+                let bill_id = result[0][0].insertId;
                 let currentIndex = 0;
 
                 function insertNextProduct() {

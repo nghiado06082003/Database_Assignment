@@ -10,18 +10,21 @@ import Header from '../shared/header'
 
 function MemberList() {
   const [memberList, setMemberList] = useState([]);
+  const [errMessage, setErrMessage] = useState(null);
   useEffect(() => {
     axios.post("/api/member/list", {})
       .then((response) => {
         console.log(response.data.memberList);
         setMemberList(response.data.memberList);
+        setErrMessage(null);
       })
-      .catch((err) => { });
+      .catch((err) => { setErrMessage(err.response.data.message) });
   }, [])
   return (
     <>
       <div className="container-md">
         <h3>Quản lý hội viên</h3>
+        {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
         <table className="table table-striped table-bordered table-hover">
           <thead>
             <tr>
@@ -30,7 +33,6 @@ function MemberList() {
               <th>Level</th>
               <th>SĐT</th>
               <th>Số dư</th>
-              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -41,14 +43,6 @@ function MemberList() {
                 <td>{rowData.level}</td>
                 <td>{rowData.phoneNumber}</td>
                 <td>{rowData.balance}</td>
-                <td>
-                  <button type="button" className="btn btn-info mx-1">
-                    Chỉnh sửa
-                  </button>
-                  <button type="button" className="btn btn-danger mx-1">
-                    Xoá hội viên
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>

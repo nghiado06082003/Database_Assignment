@@ -10,29 +10,30 @@ import Header from '../shared/header'
 
 const CreateBill = () => {
     const [formData, setFormData] = useState({
-        memberId: '',
-        employeeId: '',
+        memberId: null,
+        employeeId: null,
     });
 
-    const [searchKey, setSearchKey] = useState('');
+    const [searchKey, setSearchKey] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [addedProducts, setAddedProducts] = useState([]);
-    const [quantityProduct, setQuantityProduct] = useState(1);
+    const [quantityProduct, setQuantityProduct] = useState(null);
     const [submittedBill, setSubmittedBill] = useState(null);
+    const [errMessage, setErrMessage] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: value == '' ? null : value,
         }));
     };
 
     const handleSearch = (e) => {
         e.preventDefault();
         axios.post("/api/bill/getProduct", { productName: searchKey })
-            .then((response) => { setSearchResults(response.data.productList) })
-            .catch((error) => { });
+            .then((response) => { setSearchResults(response.data.productList); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message) });
     };
 
     const handleAddProduct = (productId, productName, productPrice) => {
@@ -54,29 +55,32 @@ const CreateBill = () => {
         e.preventDefault();
         axios.post("/api/bill/createBill", { ...formData, productList: addedProducts })
             .then((respond) => {
+                console.log(respond.data.createdBillId);
                 axios.post("/api/bill/getBillDetail", { bill_id: respond.data.createdBillId })
                     .then((respond) => {
+                        console.log(respond.data.billDetail);
                         setSubmittedBill(respond.data.billDetail);
+                        setErrMessage(null);
+                        setFormData({
+                            memberId: null,
+                            employeeId: null,
+                        });
+                        setAddedProducts([]);
                     })
-                    .catch((error) => { })
+                    .catch((err) => { setErrMessage(err.response.data.message) })
             })
-            .catch((error) => { })
+            .catch((err) => { setErrMessage(err.response.data.message) })
 
-        // Reset the form and added products after submission
-        setFormData({
-            memberId: '',
-            employeeId: '',
-        });
-        setAddedProducts([]);
     };
 
     return (
         <div className="container mt-4">
             <h2>Tạo hoá đơn mới</h2>
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <form onSubmit={handleFormSubmit}>
                 <div className="mb-3">
                     <label htmlFor="memberId" className="form-label">
-                        ID Hội viên
+                        Tài khoản hội viên
                     </label>
                     <input
                         type="text"
@@ -144,7 +148,7 @@ const CreateBill = () => {
                                     <input
                                         type="number"
                                         value={quantityProduct}
-                                        onChange={(e) => setQuantityProduct(e.target.value)}
+                                        onChange={(e) => setQuantityProduct(e.target.value == '' ? null : e.target.value)}
                                     />
                                     <button
                                         type="button"

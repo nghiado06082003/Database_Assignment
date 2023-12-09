@@ -10,45 +10,53 @@ import Header from '../shared/header'
 
 const DiscountAdd = () => {
     const [formData, setFormData] = useState({
-        discountName: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        condition: '',
-        category: '',
-        discountValue: '',
+        discountID: null,
+        discountName: null,
+        description: null,
+        startDate: null,
+        endDate: null,
+        condition: null,
+        category: null,
+        discountValue: null,
     });
+
+    const [errMessage, setErrMessage] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: value == '' ? null : value,
         }));
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add your logic for submitting the new discount data
         axios.post("/api/discount/add", { ...formData })
-            .then((response) => { console.log(response.data.message) })
-            .catch((error) => { });
-        // Reset the form after submission
-        setFormData({
-            discountName: '',
-            description: '',
-            startDate: '',
-            endDate: '',
-            condition: '',
-            category: '',
-            discountValue: '',
-        });
+            .then((response) => { setSuccessMessage(response.data.message); setErrMessage(null) })
+            .catch((err) => { setErrMessage(err.response.data.message); setSuccessMessage(null) })
     };
 
     return (
         <div className="container mt-4">
             <h2>Thêm chương trình khuyến mãi mới</h2>
+            {successMessage && (<p className="text-success fw-semibold">{successMessage}</p>)}
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                    <label htmlFor="discountID" className="form-label">
+                        Mã khuyến mãi
+                    </label>
+                    <input
+                        type="number"
+                        className="form-control"
+                        id="discountID"
+                        name="discountID"
+                        value={formData.discountID}
+                        onChange={handleChange}
+                    />
+                </div>
                 <div className="mb-3">
                     <label htmlFor="discountName" className="form-label">
                         Tên chương trình
@@ -60,7 +68,6 @@ const DiscountAdd = () => {
                         name="discountName"
                         value={formData.discountName}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -73,7 +80,6 @@ const DiscountAdd = () => {
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -81,13 +87,12 @@ const DiscountAdd = () => {
                         Ngày bắt đầu
                     </label>
                     <input
-                        type="date"
+                        type="datetime-local"
                         className="form-control"
                         id="startDate"
                         name="startDate"
                         value={formData.startDate}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -95,13 +100,12 @@ const DiscountAdd = () => {
                         Ngày kết thúc
                     </label>
                     <input
-                        type="date"
+                        type="datetime-local"
                         className="form-control"
                         id="endDate"
                         name="endDate"
                         value={formData.endDate}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -115,7 +119,6 @@ const DiscountAdd = () => {
                         name="condition"
                         value={formData.condition}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -129,7 +132,6 @@ const DiscountAdd = () => {
                         name="category"
                         value={formData.category}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <div className="mb-3">
@@ -138,12 +140,12 @@ const DiscountAdd = () => {
                     </label>
                     <input
                         type="number"
+                        step={0.01}
                         className="form-control"
                         id="discountValue"
                         name="discountValue"
                         value={formData.discountValue}
                         onChange={handleChange}
-                        required
                     />
                 </div>
                 <button type="submit" className="btn btn-primary">

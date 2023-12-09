@@ -7,7 +7,8 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ priceList: result });
+                console.log(result);
+                res.json({ priceList: result[0] });
             }
         })
     },
@@ -17,7 +18,8 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ sessionList: result });
+                console.log(result);
+                res.json({ sessionList: result[0] });
             }
         })
     },
@@ -27,7 +29,7 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ sessionList: result });
+                res.json({ sessionList: result[0] });
             }
         })
     },
@@ -37,7 +39,7 @@ module.exports = {
                 res.status(500).json({ message: err.message })
             }
             else {
-                res.json({ sessionList: result });
+                res.json({ sessionList: result[0] });
             }
         })
     }

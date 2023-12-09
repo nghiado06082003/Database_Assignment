@@ -7,8 +7,9 @@ function discountList(controller) {
 }
 
 function discountAdd(discount, controller) {
-    connect_DB.query("CALL InsertKhuyenMai(?, ?, ?, ?, ?, ?, ?)",
+    connect_DB.query("CALL InsertKhuyenMai(?, ?, ?, ?, ?, ?, ?, ?)",
         [
+            discount.discountID,
             discount.discountName,
             discount.description,
             discount.startDate,

@@ -39,12 +39,14 @@ function getBillDetail(bill_id, controller) {
             controller(err, null);
         }
         else {
+            console.log(result[0][0]);
+            console.log(result[0][0].totalPrice);
             let billDetail = {
-                id: result.id,
-                date: result.date,
-                totalPrice: result.totalPrice,
-                memberId: result.memberId,
-                employeeId: result.employeeId,
+                id: result[0][0].id,
+                date: result[0][0].date,
+                totalPrice: result[0][0].totalPrice,
+                memberId: result[0][0].memberId,
+                employeeId: result[0][0].employeeId,
                 productList: []
             };
             connect_DB.query("CALL GetChuaByMaHoaDon(?)", [bill_id], function(err, result) {
@@ -52,7 +54,8 @@ function getBillDetail(bill_id, controller) {
                     controller(err, null);
                 }
                 else {
-                    billDetail.productList = result;
+                    console.log(result[0]);
+                    billDetail.productList = result[0];
                     controller(null, billDetail);
                 }
             })

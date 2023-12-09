@@ -7,6 +7,7 @@ function memberList(controller) {
 }
 
 function memberAdd(member, controller) {
+    console.log(member);
     connect_DB.query("CALL AddHoiVien(?, ?, ?, ?, ?)",
         [
             member.account,

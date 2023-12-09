@@ -10,12 +10,14 @@ import Header from '../shared/header'
 
 const MemberAdd = () => {
   const [formData, setFormData] = useState({
-    account: '',
-    password: '',
-    name: '',
-    email: '',
-    phoneNumber: '',
+    account: null,
+    password: null,
+    name: null,
+    email: null,
+    phoneNumber: null,
   });
+  const [errMessage, setErrMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,13 +30,15 @@ const MemberAdd = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post("/api/member/add", { ...formData })
-      .then((response) => { console.log(response.data.message) })
-      .catch((err) => { })
+      .then((response) => { setSuccessMessage(response.data.message); setErrMessage(null) })
+      .catch((err) => { setErrMessage(err.response.data.message); setSuccessMessage(null) })
   };
 
   return (
     <div className="container mt-4">
       <h2>Thêm hội viên</h2>
+      {successMessage && (<p className="text-success fw-semibold">{successMessage}</p>)}
+      {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="account" className="form-label">
@@ -47,7 +51,6 @@ const MemberAdd = () => {
             name="account"
             value={formData.account}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="mb-3">
@@ -61,7 +64,6 @@ const MemberAdd = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="mb-3">
@@ -75,7 +77,6 @@ const MemberAdd = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="mb-3">
@@ -89,7 +90,6 @@ const MemberAdd = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            required
           />
         </div>
         <div className="mb-3">
@@ -103,7 +103,6 @@ const MemberAdd = () => {
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
-            required
           />
         </div>
         <button type="submit" className="btn btn-primary">

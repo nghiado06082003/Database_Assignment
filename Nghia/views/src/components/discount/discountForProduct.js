@@ -9,28 +9,30 @@ import { useState, useEffect } from "react";
 import Header from '../shared/header'
 
 const DiscountForProduct = () => {
-    const [productId, setProductId] = useState('');
+    const [productId, setProductId] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
+    const [errMessage, setErrMessage] = useState(null);
 
     const handleSearch = () => {
         axios.post("/api/discount/forProduct", { productId: productId })
             .then((response) => {
-                setSearchResults(response.data.discountForProduct)
+                setSearchResults(response.data.discountForProduct);
+                setErrMessage(null);
             })
-            .catch((error) => { })
+            .catch((err) => { setErrMessage(err.response.data.message) })
     };
 
     return (
         <div className="container mt-4">
             <h2>Truy vấn khuyến mãi cho sản phẩm</h2>
-
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <div className="mb-3">
                 <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     placeholder="Sản phẩm cần tìm khuyến mãi..."
                     value={productId}
-                    onChange={(e) => setProductId(e.target.value)}
+                    onChange={(e) => setProductId(e.target.value == '' ? null : e.target.value)}
                 />
                 <button
                     type="button"

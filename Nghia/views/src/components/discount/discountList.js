@@ -10,26 +10,18 @@ import Header from '../shared/header'
 
 const DiscountList = () => {
     const [discountList, setDiscountList] = useState([]);
+    const [errMessage, setErrMessage] = useState(null);
 
     useEffect(() => {
         axios.post("/api/discount/list", {})
             .then((response) => { setDiscountList(response.data.discountList) })
-            .catch((error) => { })
+            .catch((err) => { setErrMessage(err.response.data.message) })
     }, [])
-
-    const handleEdit = (id) => {
-        // Add logic to handle edit action
-        console.log(`Edit discount with ID ${id}`);
-    };
-
-    const handleDelete = (id) => {
-        // Add logic to handle delete action
-        console.log(`Delete discount with ID ${id}`);
-    };
 
     return (
         <div className="container mt-4">
             <h2>Danh sách khuyến mãi</h2>
+            {errMessage && (<p className="text-danger fw-semibold">{errMessage}</p>)}
             <table className="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>

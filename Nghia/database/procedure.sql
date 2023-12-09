@@ -107,12 +107,14 @@ begin
     declare bill_cost int;
     declare id_khuyen_mai int;
     declare ngay_thuc_hien datetime;
-	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien,bill_cost from `hoa don` where `ma hoa don` = bill_id;
-    select `ma khuyen mai` ,`muc_giam` into id_khuyen_mai,muc_giam from `khuyen mai` 
+	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien, bill_cost from `hoa don` where `ma hoa don` = bill_id;
+    select `ma khuyen mai` ,`muc giam` into id_khuyen_mai, muc_giam from `khuyen mai` 
     where `loai` = 'bill' 
     and `dieu kien` <= bill_cost
     and ngay_thuc_hien >= `ngay bat dau`
-    and ngay_thuc_hien <= `ngay ket thuc`;
+    and ngay_thuc_hien <= `ngay ket thuc`
+    order by `muc giam` desc, `ma khuyen mai` asc
+    limit 1;
     if id_khuyen_mai is not null then
 		set bill_cost = (1-muc_giam)*bill_cost;
         insert into `ap dung hoa don` (`ma hoa don`, `ma khuyen mai`) values (bill_id,id_khuyen_mai);
@@ -283,44 +285,44 @@ CREATE PROCEDURE AddHoiVien(
     IN p_email CHAR(255)
 )
 BEGIN
-    IF p_account IS NULL THEN
-        SIGNAL SQLSTATE '45001'
-        SET MESSAGE_TEXT = 'p_account must have a non-null value';
-    END IF;
+	IF p_account IS NULL OR p_account = '' THEN
+		SIGNAL SQLSTATE '45001'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong tai khoan hoi vien';
+	END IF;
 
-    IF p_password IS NULL THEN
-        SIGNAL SQLSTATE '45002'
-        SET MESSAGE_TEXT = 'p_password must have a non-null value';
-    END IF;
+	IF p_password IS NULL OR p_password = '' THEN
+		SIGNAL SQLSTATE '45002'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong mat khau hoi vien';
+	END IF;
 
-    IF p_ten IS NULL THEN
-        SIGNAL SQLSTATE '45003'
-        SET MESSAGE_TEXT = 'p_ten must have a non-null value';
-    END IF;
+	IF p_ten IS NULL OR p_ten = '' THEN
+		SIGNAL SQLSTATE '45003'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong ten hoi vien';
+	END IF;
 
-    IF p_sdt IS NULL THEN
-        SIGNAL SQLSTATE '45004'
-        SET MESSAGE_TEXT = 'p_sdt must have a non-null value';
-    END IF;
+	IF p_sdt IS NULL OR p_sdt = '' THEN
+		SIGNAL SQLSTATE '45004'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong so dien thoai hoi vien';
+	END IF;
 
-    IF p_email IS NULL THEN
-        SIGNAL SQLSTATE '45005'
-        SET MESSAGE_TEXT = 'p_email must have a non-null value';
-    END IF;
+	IF p_email IS NULL OR p_email = '' THEN
+		SIGNAL SQLSTATE '45005'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong email hoi vien';
+	END IF;
 
-    IF NOT REGEXP_LIKE(p_sdt, '^[0-9]+$') THEN
-        SIGNAL SQLSTATE '45006'
-        SET MESSAGE_TEXT = 'p_sdt must contain only numeric digits';
-    END IF;
+	IF NOT REGEXP_LIKE(p_sdt, '^[0-9]+$') THEN
+		SIGNAL SQLSTATE '45006'
+		SET MESSAGE_TEXT = 'So dien thoai hoi vien chi duoc chua ki tu so, khong duoc co ki tu chu cai hay dac biet';
+	END IF;
 
     IF EXISTS (SELECT 1 FROM `Hoi Vien` WHERE email = p_email) THEN
         SIGNAL SQLSTATE '45007'
-        SET MESSAGE_TEXT = 'p_email must be distinct and not appear in other rows';
+        SET MESSAGE_TEXT = 'Email nay da duoc dang ky boi nguoi khac';
     END IF;
 
     IF EXISTS (SELECT 1 FROM `Hoi Vien` WHERE sdt = p_sdt) THEN
         SIGNAL SQLSTATE '45008'
-        SET MESSAGE_TEXT = 'p_sdt must be distinct and not appear in other rows';
+        SET MESSAGE_TEXT = 'So dien thoai nay da duoc dang ky boi nguoi khac';
     END IF;
 
     INSERT INTO `Hoi Vien` (
@@ -362,6 +364,7 @@ DELIMITER ;
 DELIMITER //
 
 CREATE PROCEDURE InsertKhuyenMai(
+	IN p_ma_khuyen_mai INT,
     IN p_ten_chuong_trinh CHAR(255),
     IN p_mo_ta CHAR(255),
     IN p_ngay_bat_dau DATETIME,
@@ -371,42 +374,48 @@ CREATE PROCEDURE InsertKhuyenMai(
     IN p_muc_giam FLOAT
 )
 BEGIN
-    IF p_ten_chuong_trinh IS NULL THEN
-        SIGNAL SQLSTATE '45001'
-        SET MESSAGE_TEXT = 'p_ten_chuong_trinh must have a non-null value';
-    END IF;
+	IF p_ma_khuyen_mai IS NULL OR p_ma_khuyen_mai = '' THEN
+		SIGNAL SQLSTATE '45001'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong ma khuyen mai';
+	END IF;
+    
+	IF p_ten_chuong_trinh IS NULL OR p_ten_chuong_trinh = '' THEN
+		SIGNAL SQLSTATE '45001'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong ten chuong trinh khuyen mai';
+	END IF;
 
-    IF p_mo_ta IS NULL THEN
-        SIGNAL SQLSTATE '45002'
-        SET MESSAGE_TEXT = 'p_mo_ta must have a non-null value';
-    END IF;
+	IF p_mo_ta IS NULL OR p_mo_ta = '' THEN
+		SIGNAL SQLSTATE '45002'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong mo ta khuyen mai';
+	END IF;
 
-    IF p_ngay_bat_dau IS NULL THEN
-        SIGNAL SQLSTATE '45003'
-        SET MESSAGE_TEXT = 'p_ngay_bat_dau must have a non-null value';
-    END IF;
+	IF p_ngay_bat_dau IS NULL THEN
+		SIGNAL SQLSTATE '45003'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong ngay bat dau khuyen mai';
+	END IF;
 
-    IF p_ngay_ket_thuc IS NULL THEN
-        SIGNAL SQLSTATE '45004'
-        SET MESSAGE_TEXT = 'p_ngay_ket_thuc must have a non-null value';
-    END IF;
+	IF p_ngay_ket_thuc IS NULL THEN
+		SIGNAL SQLSTATE '45004'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong ngay ket thuc khuyen mai';
+	END IF;
 
-    IF p_loai IS NULL THEN
-        SIGNAL SQLSTATE '45005'
-        SET MESSAGE_TEXT = 'p_loai must have a non-null value';
-    END IF;
+	IF p_loai IS NULL OR p_loai = '' THEN
+		SIGNAL SQLSTATE '45005'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong loai khuyen mai';
+	END IF;
 
-    IF p_dieu_kien IS NULL OR p_dieu_kien <= 0 THEN
-        SIGNAL SQLSTATE '45006'
-        SET MESSAGE_TEXT = 'p_dieu_kien must be a non-null integer greater than 0';
-    END IF;
+	IF p_dieu_kien IS NULL OR p_dieu_kien = '' OR NOT p_dieu_kien REGEXP '^[0-9]+$'  OR p_dieu_kien <= 0 THEN
+		SIGNAL SQLSTATE '45006'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong dieu kien khuyen mai, dieu kien phai la so nguyen duong';
+	END IF;
 
-    IF p_muc_giam IS NULL OR p_muc_giam <= 0 OR p_muc_giam >= 1 THEN
-        SIGNAL SQLSTATE '45007'
-        SET MESSAGE_TEXT = 'p_muc_giam must be a non-null float greater than 0 and less than 1';
-    END IF;
+	IF p_muc_giam IS NULL OR p_muc_giam = '' OR p_muc_giam <= 0 OR p_muc_giam >= 1 THEN
+		SIGNAL SQLSTATE '45007'
+		SET MESSAGE_TEXT = 'Khong duoc bo trong muc giam, muc giam phai lon hon 0 va nho hon 1';
+	END IF;
 
     INSERT INTO `Khuyen Mai` (
+		`ma khuyen mai`,
         `ten chuong trinh`,
         `mo ta`,
         `ngay bat dau`,
@@ -415,6 +424,7 @@ BEGIN
         `dieu kien`,
         `muc giam`
     ) VALUES (
+		p_ma_khuyen_mai,
         p_ten_chuong_trinh,
         p_mo_ta,
         p_ngay_bat_dau,
@@ -431,10 +441,9 @@ DELIMITER //
 
 CREATE PROCEDURE GetKhuyenMaiInfoForSanPham(IN p_ma_san_pham INT)
 BEGIN
-    IF p_ma_san_pham IS NULL OR p_ma_san_pham <= 0 THEN
+    IF p_ma_san_pham IS NULL OR p_ma_san_pham = '' OR NOT p_ma_san_pham REGEXP '^[0-9]+$' OR p_ma_san_pham <= 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'p_ma_san_pham must be a non-null positive integer';
-        RETURN;
+        SET MESSAGE_TEXT = 'Ma san pham khong duoc bo trong va phai la so nguyen duong';
     END IF;
     
     SELECT km.`dieu kien` AS `condition`, km.`muc giam` AS `discountValue`
@@ -445,14 +454,20 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
+
 CREATE PROCEDURE GetMayTinhInfo(IN may_tinh_id INT)
 BEGIN
+	IF may_tinh_id IS NULL OR may_tinh_id = '' OR NOT may_tinh_id REGEXP '^[0-9]+$' OR may_tinh_id <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ma may tinh khong duoc bo trong va phai la so nguyen duong';
+    END IF;
     SELECT ch.`gia` AS `price`, kv.`phu thu` AS `additionalCharge`
-    FROM May_Tinh mt
-    JOIN Cau_Hinh ch ON mt.`id cau hinh` = ch.ID
-    JOIN Khu_Vuc kv ON mt.`phan loai khu vuc` = kv.`loai khu vuc`
+    FROM `May Tinh` mt
+    JOIN `Cau Hinh` ch ON mt.`id cau hinh` = ch.ID
+    JOIN `Khu Vuc` kv ON mt.`phan loai khu vuc` = kv.`loai khu vuc`
     WHERE mt.ID = may_tinh_id;
-END;
+END //
 
 DELIMITER //
 
@@ -469,10 +484,9 @@ DELIMITER //
 
 CREATE PROCEDURE GetActiveSessionsByIdMayTinh(IN may_tinh_id INT)
 BEGIN
-    IF may_tinh_id IS NULL THEN
+    IF may_tinh_id IS NULL OR may_tinh_id = '' OR NOT may_tinh_id REGEXP '^[0-9]+$' OR may_tinh_id <= 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'May Tinh ID cannot be null';
-        RETURN;
+        SET MESSAGE_TEXT = 'Ma san pham khong duoc bo trong va phai la so nguyen duong';
     END IF;
 
     SELECT `Session ID` AS `id`, `gio bat dau` AS `startTime`, `id may tinh` AS `computerId`, `tai khoan hv` AS `memberId`
@@ -488,8 +502,7 @@ CREATE PROCEDURE GetActiveSessionsByTaiKhoanHV(IN tai_khoan_hv VARCHAR(255))
 BEGIN
     IF tai_khoan_hv IS NULL OR tai_khoan_hv = '' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Tai Khoan HV cannot be null or empty';
-        RETURN;
+        SET MESSAGE_TEXT = 'Tai khoan hoi vien khong duoc bo trong';
     END IF;
 
     SELECT `Session ID` AS `id`, `gio bat dau` AS `startTime`, `id may tinh` AS `computerId`, `tai khoan hv` AS `memberId`
@@ -508,14 +521,12 @@ BEGIN
 
     IF tai_khoan_hv IS NULL OR tai_khoan_hv = '' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Tai Khoan HV cannot be null or empty';
-        RETURN;
+        SET MESSAGE_TEXT = 'Tai Khoan HV khong duoc bo trong';
     END IF;
 
-    IF id_le_tan IS NULL THEN
+    IF id_le_tan IS NULL OR id_le_tan = '' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'ID Le Tan cannot be null';
-        RETURN;
+        SET MESSAGE_TEXT = 'ID Le Tan khong duoc bo trong';
     END IF;
 
     SELECT COUNT(*) INTO existing_account
@@ -524,8 +535,7 @@ BEGIN
 
     IF existing_account = 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Tai Khoan HV does not exist';
-        RETURN;
+        SET MESSAGE_TEXT = 'Tai Khoan HV khong ton tai';
     END IF;
 
     SELECT COUNT(*) INTO existing_le_tan
@@ -534,12 +544,13 @@ BEGIN
 
     IF existing_le_tan = 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'ID Le Tan does not exist';
-        RETURN;
+        SET MESSAGE_TEXT = 'ID Le Tan khong ton tai';
     END IF;
 
     INSERT INTO `Hoa Don` (`ngay thuc hien`, `tong tien`, `tai khoan hv`, `id le tan`)
     VALUES (NOW(), 0, tai_khoan_hv, id_le_tan);
+    
+    SELECT LAST_INSERT_ID() AS `insertId`;
 END //
 
 DELIMITER ;
@@ -561,8 +572,7 @@ BEGIN
 
     IF p_product_id IS NULL OR p_so_luong IS NULL OR p_bill_id IS NULL THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Input parameters cannot be null';
-        RETURN;
+        SET MESSAGE_TEXT = 'Tham so dau vao khong duoc bo trong';
     END IF;
 
     IF p_product_id <> 1 THEN
@@ -572,8 +582,7 @@ BEGIN
 
         IF available_quantity = 0 THEN
             SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Error: So luong in Dich Vu Them is 0';
-            RETURN;
+            SET MESSAGE_TEXT = 'So luong cua san pham nay trong Dich Vu Them dang la 0';
         END IF;
 
         IF available_quantity < p_so_luong THEN
@@ -590,6 +599,8 @@ BEGIN
 
     IF muc_giam IS NOT NULL THEN
         SET thanh_tien = (1 - muc_giam) * thanh_tien * p_so_luong;
+	ELSE
+		SET thanh_tien = thanh_tien * p_so_luong;
     END IF;
 
     SET bill_cost = bill_cost + thanh_tien;
@@ -610,30 +621,42 @@ DELIMITER //
 
 CREATE PROCEDURE GetProductInfo(IN p_ten_san_pham VARCHAR(255))
 BEGIN
-    DECLARE product_id INT;
-
+    -- Validate input
     IF p_ten_san_pham IS NULL OR p_ten_san_pham = '' THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Ten San Pham cannot be null or empty';
-        RETURN;
+        SET MESSAGE_TEXT = 'Khong duoc bo trong Ten san pham';
     END IF;
 
-    SELECT `ma san pham` INTO product_id
-    FROM `San Pham`
-    WHERE LOWER(`ten san pham`) LIKE LOWER(CONCAT('%', p_ten_san_pham, '%'));
+    -- Check if there are any matching rows in San Pham
+    IF EXISTS (
+        SELECT 1
+        FROM `San Pham`
+        WHERE LOWER(`ten san pham`) LIKE LOWER(CONCAT('%', p_ten_san_pham, '%'))
+    ) THEN
+        -- If there are matching rows, select from San Pham with or without Dich Vu Them
+        SELECT
+			sp.`ma san pham` AS `productId`,
+			sp.`ten san pham` AS `name`,
+			sp.`gia niem yet` AS `price`,
+			dv.`so luong` AS `instock`
+		FROM `San Pham` sp
+		LEFT JOIN `Dich Vu Them` dv ON sp.`ma san pham` = dv.`ma san pham`
+			AND dv.`ma san pham` <> 1 -- Exclude the case where ma san pham is 1
+		WHERE LOWER(sp.`ten san pham`) LIKE LOWER(CONCAT('%', p_ten_san_pham, '%'));
 
-    IF product_id = 1 THEN
-        SELECT `ma san pham` AS `productId`, `ten san pham` AS `name`, `gia niem yet` AS `price`
-        FROM `San Pham`;
     ELSE
-        SELECT sp.`ma san pham` AS `productId`, sp.`ten san pham` AS `name`, sp.`gia niem yet` AS `price`, dv.so_luong AS `instock`
-        FROM `San Pham` sp
-        JOIN `Dich Vu Them` dv ON sp.`ma san pham` = dv.`ma san pham`
-        WHERE LOWER(sp.`ten san pham`) LIKE LOWER(CONCAT('%', p_ten_san_pham, '%'));
+        -- If there are no matching rows, return an empty result set
+        SELECT
+            NULL AS `productId`,
+            NULL AS `name`,
+            NULL AS `price`,
+            NULL AS `instock`
+        WHERE 1 = 0; -- Always false condition to return an empty result set
     END IF;
 END //
 
 DELIMITER ;
+
 
 DELIMITER //
 
@@ -641,8 +664,7 @@ CREATE PROCEDURE GetHoaDonByMaHoaDon(IN p_ma_hoa_don INT)
 BEGIN
     IF p_ma_hoa_don IS NULL THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Ma Hoa Don cannot be null';
-        RETURN;
+        SET MESSAGE_TEXT = 'Ma Hoa Don khong duoc bo trong';
     END IF;
 
     SELECT `ma hoa don` AS `id`, `ngay thuc hien` AS `date`, `tong tien` AS `totalPrice`, `tai khoan hv` AS `memberId`, `id le tan` AS `employeeId`
@@ -659,8 +681,7 @@ CREATE PROCEDURE GetChuaByMaHoaDon(IN p_ma_hoa_don INT)
 BEGIN
     IF p_ma_hoa_don IS NULL THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Ma Hoa Don cannot be null';
-        RETURN;
+        SET MESSAGE_TEXT = 'Ma Hoa Don khong duoc bo trong';
     END IF;
 
     SELECT c.`ma san pham` AS `productId`, c.`so luong` AS `quantity`, sp.`ten san pham` AS `name`, sp.`gia niem yet` AS `price`
