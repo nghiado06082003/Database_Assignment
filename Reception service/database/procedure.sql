@@ -97,7 +97,6 @@ begin
 end;
 //
 DELIMITER ;
-
 DELIMITER //
 create procedure applyDiscountToBill(
 	in bill_id int
@@ -107,14 +106,12 @@ begin
     declare bill_cost int;
     declare id_khuyen_mai int;
     declare ngay_thuc_hien datetime;
-	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien, bill_cost from `hoa don` where `ma hoa don` = bill_id;
-    select `ma khuyen mai` ,`muc giam` into id_khuyen_mai, muc_giam from `khuyen mai` 
+	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien,bill_cost from `hoa don` where `ma hoa don` = bill_id;
+    select `ma khuyen mai` ,`muc_giam` into id_khuyen_mai,muc_giam from `khuyen mai` 
     where `loai` = 'bill' 
     and `dieu kien` <= bill_cost
     and ngay_thuc_hien >= `ngay bat dau`
-    and ngay_thuc_hien <= `ngay ket thuc`
-    order by `muc giam` desc, `ma khuyen mai` asc
-    limit 1;
+    and ngay_thuc_hien <= `ngay ket thuc`;
     if id_khuyen_mai is not null then
 		set bill_cost = (1-muc_giam)*bill_cost;
         insert into `ap dung hoa don` (`ma hoa don`, `ma khuyen mai`) values (bill_id,id_khuyen_mai);
@@ -156,14 +153,41 @@ begin
 end;
 //
 DELIMITER ;
+-- DELIMITER //
 
+-- CREATE PROCEDURE AddHoiVien(
+--     IN p_account CHAR(255),
+--     IN p_password CHAR(255),
+--     IN p_ten CHAR(255),
+--     IN p_sdt CHAR(10),
+--     IN p_email CHAR(255)
+-- )
+-- BEGIN
+--     INSERT INTO `Hoi Vien` (
+--         `account`,
+--         `password`,
+--         `ten`,
+--         `sdt`,
+--         `email`
+--     ) VALUES (
+--         p_account,
+--         p_password,
+--         p_ten,
+--         p_sdt,
+--         p_email
+--     );
+-- END;
 
+-- //
+
+DELIMITER ;
+DROP PROCEDURE IF EXISTS thongKeKhuyenMai;
 DELIMITER //
 CREATE PROCEDURE thongKeKhuyenMai(
 	in ma_khuyen_mai int
 )
 BEGIN
-	Select ct.`ma san pham`, ct.`so luong`
+	Select ct.`ma san pham`, ct.`so luong`,ct.`ma hoa don`
     from `hoa don` as hd natural join
 	(SELECT *
 	FROM chua as c natural join
@@ -260,7 +284,29 @@ BEGIN
 END;
 //
 DELIMITER ;
-
+DELIMITER //
+CREATE PROCEDURE thongKeSPKhuyenMai(
+	in ma_khuyen_mai int
+)
+BEGIN
+	Select `ma san pham`, `ten san pham`, `so luong`
+    from `san pham` as sp natural join
+	(Select ct.`ma san pham`, ct.`so luong`
+    from `hoa don` as hd natural join
+	(SELECT *
+	FROM chua as c natural join
+	(SELECT km.`ngay bat dau`, km.`ngay ket thuc`,adsp.`ma san pham` 
+    from `khuyen mai` AS km 
+    natural join `ap dung san pham` as adsp
+    where  km.`ma khuyen mai`= ma_khuyen_mai and km.`ma khuyen mai` = adsp.`ma khuyen mai`) as spkm
+	where spkm.`ma san pham` = c.`ma san pham`) AS ct
+    where hd.`ma hoa don` = ct.`ma hoa don` 
+    and hd.`ngay thuc hien` >= ct.`ngay bat dau` 
+    and hd.`ngay thuc hien` <= ct.`ngay ket thuc`) as kq
+    where sp.`ma san pham` = kq.`ma san pham`;
+END;
+//
+DELIMITER ;
 DELIMITER //
 CREATE PROCEDURE SelectHoiVienInfo()
 BEGIN
@@ -691,32 +737,132 @@ BEGIN
 END //
 
 DELIMITER ;
+drop procedure if exists getAllComputerInfo;
+DELIMITER //
+create procedure getAllComputerInfo()
+Begin
+	SELECT pc.*, ch.gia,kv.`phu thu`
+    FROM `may tinh` as pc 
+    join (SELECT id, gia from `cau hinh`) as ch
+    join (SELECT `loai khu vuc`, `phu thu` from `khu vuc`) as kv
+    on pc.`id cau hinh` = ch.id and pc.`phan loai khu vuc` = kv.`loai khu vuc` ORDER BY pc.ID ASC;
+END;
+//
+DELIMITER ;
+drop procedure if exists updateComputerInfo;
+DELIMITER //
+
+CREATE PROCEDURE updateComputerInfo(
+    IN computerID INT,
+    IN newHang CHAR(255),
+    IN newNgayMua DATE,
+    IN newPhanLoaiKhuVuc CHAR(255),
+    IN newIdCauHinh INT
+)
+BEGIN
+    UPDATE `May Tinh`
+    SET
+        hang = newHang,
+        `ngay mua` = newNgayMua,
+        `phan loai khu vuc` = newPhanLoaiKhuVuc,
+        `id cau hinh` = newIdCauHinh
+    WHERE ID = computerID;
+END //
+DELIMITER ;
+drop procedure if exists addComputer;
+DELIMITER //
+CREATE PROCEDURE addComputer(
+    IN newHang CHAR(255),
+    IN newNgayMua DATE,
+    IN newPhanLoaiKhuVuc CHAR(255),
+    IN newIdCauHinh INT
+)
+BEGIN
+    insert into `May Tinh` (hang,`ngay mua`,`phan loai khu vuc`,`id cau hinh`)
+    values (newHang,newNgayMua,newPhanLoaiKhuVuc,newIdCauHinh);
+END //
+DELIMITER ;
+drop procedure if exists getAllConfigInfo;
+DELIMITER //
+create procedure getAllConfigInfo()
+Begin
+	select * from `cau hinh` order by id asc;
+END;
+//
+DELIMITER ;
+drop procedure if exists updateConfigInfo;
+DELIMITER //
+CREATE PROCEDURE updateConfigInfo(
+    IN p_id INT,
+    IN p_kich_thuoc_man_hinh FLOAT,
+    IN p_cpu CHAR(255),
+    IN p_card_do_hoa CHAR(255),
+    IN p_ram INT,
+    IN p_tan_so_man_hinh INT,
+    IN p_gia INT
+)
+BEGIN
+    DECLARE v_valid BOOLEAN;
+
+    -- Check if the new values meet the specified conditions
+    SET v_valid = (p_gia > 0 AND p_ram > 4 AND p_kich_thuoc_man_hinh > 20 AND p_tan_so_man_hinh >= 60);
+
+    IF v_valid THEN
+        -- Update the record if the conditions are met
+        UPDATE `Cau Hinh`
+        SET
+            `kich thuoc man hinh` = p_kich_thuoc_man_hinh,
+            `cpu` = p_cpu,
+            `card do hoa` = p_card_do_hoa,
+            ram = p_ram,
+            `tan so man hinh` = p_tan_so_man_hinh,
+            gia = p_gia
+        WHERE ID = p_id;
+
+        SELECT 'Update successful' AS result;
+    ELSE
+        SELECT 'Update failed. New values do not meet the specified conditions' AS result;
+    END IF;
+END //
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE SignInForLeTan(IN p_account VARCHAR(255), IN p_password VARCHAR(255))
+
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Tai khoan Le Tan khong duoc bo trong';
+    END IF;
+    IF p_password IS NULL OR p_password = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Mat khau khong duoc bo trong';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `password` = p_password;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE AuthorizeLeTan(IN p_id INT, IN p_account VARCHAR(255))
+
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Khong tim thay tai khoan Le Tan trong token xac thuc';
+    END IF;
+    IF p_id IS NULL OR p_id = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Khong tim thay ID Le Tan trong token xac thuc';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `ID` = p_id;
+END //
+
+DELIMITER ;
 
 
--- DELIMITER //
--- CREATE PROCEDURE addProductToBill(
---     IN product_id INT,
---     IN so_luong INT,
---     IN bill_id INT
--- )
--- begin
--- 	DECLARE date_apply datetime;
---     DECLARE muc_giam FLOAT;
---     declare ma_khuyen_mai int;
---     DECLARE thanh_tien INT;
---     DECLARE bill_cost INT;
---     SELECT `ngay thuc hien` INTO date_apply FROM `hoa don` WHERE `ma hoa don` = bill_id;
---     CALL getDiscountForProduct(product_id, so_luong, date_apply,ma_khuyen_mai,muc_giam);
---     SELECT `gia niem yet` INTO thanh_tien FROM `san pham` WHERE `ma san pham` = product_id;
---     SELECT `tong tien` INTO bill_cost FROM `hoa don` WHERE `ma hoa don` = bill_id;
---     IF muc_giam IS NOT NULL THEN
---         SET thanh_tien = (1 - muc_giam) * thanh_tien*so_luong;
---     END IF;
 
---     SET bill_cost = bill_cost + thanh_tien;
---     UPDATE `hoa don` SET `tong tien` = bill_cost WHERE `ma hoa don` = bill_id;
 
---     INSERT INTO `chua` (`ma hoa don`, `ma san pham`, `so luong`) VALUES (bill_id, product_id, so_luong);
--- end;
--- //
--- DELIMITER ;

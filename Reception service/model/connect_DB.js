@@ -9,11 +9,11 @@ var mysql = require("mysql2")
 var connect_DB = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "12090608",
+    password: "1234",
     database: "internet_store"
 });
 
-connect_DB.connect(function(err) {
+connect_DB.connect(function (err) {
     if (err) throw err;
 });
 

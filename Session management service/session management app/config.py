@@ -2,6 +2,6 @@ DATABASECONFIG = {
     'host':"localhost",
     'user':"root",
     'port':3306,
-    'password':"hieudz14022003",
+    'password':"1234",
     'database':'internet_store'
 }
