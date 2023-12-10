@@ -19,6 +19,8 @@
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.6.5",
+    "package.json": "^2.0.1",
+    "react-scripts": "^5.0.1",
     "universal-cookie": "^6.1.1"
   },
   "devDependencies": {

@@ -5,7 +5,7 @@ VALUES ('nhanvien1', 1, '2003-01-01', '2023-01-01', '2024-01-01');
 
 -- Insert into `Le Tan`
 INSERT INTO `Le Tan` (id, `account`, `password`, `lich truc`)
-VALUES (1, 'nhanvien1', '$2a$12$C8RnAXv7VvkLl579alWib.k7Oczsx08jfJxsUEUbf47aQRphyfPku', 'thu 2 thu 3 thu 4');
+VALUES (1, 'nhanvien1', '123 ','thu 2 thu 3 thu 4');
 
 -- Insert into `cau hinh`
 INSERT INTO `cau hinh` (id, `kich thuoc man hinh`, `cpu`, `card do hoa`, `ram`, `tan so man hinh`, `gia`)

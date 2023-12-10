@@ -97,6 +97,29 @@ begin
 end;
 //
 DELIMITER ;
+-- DELIMITER //
+-- create procedure applyDiscountToBill(
+-- 	in bill_id int
+-- )
+-- begin
+-- 	declare muc_giam float;
+--     declare bill_cost int;
+--     declare id_khuyen_mai int;
+--     declare ngay_thuc_hien datetime;
+-- 	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien,bill_cost from `hoa don` where `ma hoa don` = bill_id;
+--     select `ma khuyen mai` ,`muc_giam` into id_khuyen_mai,muc_giam from `khuyen mai` 
+--     where `loai` = 'bill' 
+--     and `dieu kien` <= bill_cost
+--     and ngay_thuc_hien >= `ngay bat dau`
+--     and ngay_thuc_hien <= `ngay ket thuc`;
+--     if id_khuyen_mai is not null then
+-- 		set bill_cost = (1-muc_giam)*bill_cost;
+--         insert into `ap dung hoa don` (`ma hoa don`, `ma khuyen mai`) values (bill_id,id_khuyen_mai);
+--         update `hoa don` set `tong tien` = bill_cost where `ma hoa don`=bill_id;
+--     end if;
+-- end;
+-- //
+-- DELIMITER ;
 DELIMITER //
 create procedure applyDiscountToBill(
 	in bill_id int
@@ -106,12 +129,14 @@ begin
     declare bill_cost int;
     declare id_khuyen_mai int;
     declare ngay_thuc_hien datetime;
-	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien,bill_cost from `hoa don` where `ma hoa don` = bill_id;
-    select `ma khuyen mai` ,`muc_giam` into id_khuyen_mai,muc_giam from `khuyen mai` 
+	select `ngay thuc hien`, `tong tien` into ngay_thuc_hien, bill_cost from `hoa don` where `ma hoa don` = bill_id;
+    select `ma khuyen mai` ,`muc giam` into id_khuyen_mai, muc_giam from `khuyen mai` 
     where `loai` = 'bill' 
     and `dieu kien` <= bill_cost
     and ngay_thuc_hien >= `ngay bat dau`
-    and ngay_thuc_hien <= `ngay ket thuc`;
+    and ngay_thuc_hien <= `ngay ket thuc`
+    order by `muc giam` desc, `ma khuyen mai` asc
+    limit 1;
     if id_khuyen_mai is not null then
 		set bill_cost = (1-muc_giam)*bill_cost;
         insert into `ap dung hoa don` (`ma hoa don`, `ma khuyen mai`) values (bill_id,id_khuyen_mai);
@@ -153,32 +178,6 @@ begin
 end;
 //
 DELIMITER ;
--- DELIMITER //
-
--- CREATE PROCEDURE AddHoiVien(
---     IN p_account CHAR(255),
---     IN p_password CHAR(255),
---     IN p_ten CHAR(255),
---     IN p_sdt CHAR(10),
---     IN p_email CHAR(255)
--- )
--- BEGIN
---     INSERT INTO `Hoi Vien` (
---         `account`,
---         `password`,
---         `ten`,
---         `sdt`,
---         `email`
---     ) VALUES (
---         p_account,
---         p_password,
---         p_ten,
---         p_sdt,
---         p_email
---     );
--- END;
-
--- //
 
 DELIMITER ;
 DROP PROCEDURE IF EXISTS thongKeKhuyenMai;
@@ -823,6 +822,43 @@ BEGIN
         SELECT 'Update failed. New values do not meet the specified conditions' AS result;
     END IF;
 END //
+DELIMITER ;
+DELIMITER //
+
+CREATE PROCEDURE SignInForLeTan(IN p_account VARCHAR(255), IN p_password VARCHAR(255))
+
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Tai khoan Le Tan khong duoc bo trong';
+    END IF;
+    IF p_password IS NULL OR p_password = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Mat khau khong duoc bo trong';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `password` = p_password;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE AuthorizeLeTan(IN p_id INT, IN p_account VARCHAR(255))
+
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Khong tim thay tai khoan Le Tan trong token xac thuc';
+    END IF;
+    IF p_id IS NULL OR p_id = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Khong tim thay ID Le Tan trong token xac thuc';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `ID` = p_id;
+END //
+
 DELIMITER ;
 
 
