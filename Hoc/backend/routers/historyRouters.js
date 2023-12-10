@@ -6,9 +6,14 @@ const {
   getPrintingHistory,
   getPersonalPrintingHistory,
   getPrinterPrintingHistory,
+  getKhuyenMai,
+  getProductBySaleID,
 } = require("../controllers/historyController");
 
 routes.get("/", authenticateToken, getPrintingHistory);
+
+routes.get("/sales", authenticateToken, getKhuyenMai);
+routes.get("/sales/:id_sale", authenticateToken, getProductBySaleID);
 
 routes.get("/:id", authenticateToken, getPersonalPrintingHistory);
 

@@ -18,7 +18,7 @@
     <link href="css/history_management.css" rel="stylesheet" />
     <link href="css/menu.css" rel="stylesheet" />
     <link rel="shortcut icon" href="./image/icon.ico" type="image/x-icon" />
-    <title>Quản lý lịch sử</title>
+    <title>Quản lý khuyến mãi</title>
   </head>
   <body>
     <div class="container-fluid p-0" id="body">
@@ -36,16 +36,22 @@
             <div class="row px-3 my-2 h5 theme-color">
               Thống kê sản phẩm đã bán theo khuyến mãi
             </div>
+            <div class="select-sale">
+              <span class="h6">Chọn khuyến mãi để thống kê: </span>
+              <select class="form-select form-select-md mb-3" id="mySelect">
+                <option selected>Select discount</option>
+              </select>
+            </div>
+
             <div class="row ps-2">
               <table class="table pt-0" id="history_list">
                 <thead>
                   <tr class="h-100">
-                    <th scope="col pt-0" class="Montserrat">Người dùng</th>
-                    <th scope="col pt-0" class="Montserrat">Số lượt in</th>
+                    <th scope="col pt-0" class="Montserrat">Mã sản phẩm</th>
+                    <th scope="col pt-0" class="Montserrat">Tên sản phẩm</th>
                     <th scope="col pt-0" class="Montserrat">
-                      Số lượng giấy đã in
+                      Số lượng đã áp dụng khuyến mãi
                     </th>
-                    <th scope="col pt-0" class="Montserrat">Tình trạng</th>
                   </tr>
                 </thead>
                 <tbody></tbody>

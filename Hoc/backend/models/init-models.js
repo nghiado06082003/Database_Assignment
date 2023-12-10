@@ -4,12 +4,14 @@ var _quantrivien = require("./quantrivien");
 var _khuvuc = require("./khuvuc");
 var _maytinh = require("./maytinh");
 var _cauhinh = require("./cauhinh");
+var _khuyenmai = require("./khuyenmai");
 
 function initModels(sequelize) {
   var quantrivien = _quantrivien(sequelize, DataTypes);
   var maytinh = _maytinh(sequelize, DataTypes);
   var khuvuc = _khuvuc(sequelize, DataTypes);
   var cauhinh = _cauhinh(sequelize, DataTypes);
+  var khuyenmai = _khuyenmai(sequelize, DataTypes);
 
   maytinh.belongsTo(cauhinh, {
     foreignKey: "id cau hinh",
