@@ -206,7 +206,6 @@ class App:
         self.displayMain()
         self.timethread = threading.Thread(target=self.timing)
         self.timethread.start()
-
     def createMainUIFrame(self):
         self.window.geometry("300x400")
         self.signInFrame.place_forget()
@@ -252,7 +251,6 @@ class App:
             self.timethread = None
         if self.running:
             self.createSignInUI()
-
     def openChangeInfoWindow(self):
         def changeInfo():
             name = name_entry.get()
