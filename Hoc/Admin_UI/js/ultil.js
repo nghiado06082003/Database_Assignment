@@ -46,18 +46,18 @@ function validateInput(
   const regex3 = /^.*$/;
   const regex4 = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
-  const regexArray = [regex1, regex2, regex3, regex4];
-  const processedInputArray = [hang, idcauhinh, phanloaikhuvuc, ngaymua];
+  const regexArray = [regex1, regex4, regex3, regex2];
+  const processedInputArray = [hang, ngaymua, phanloaikhuvuc, idcauhinh];
 
   for (let i = 0; i < regexArray.length; i++) {
     const regex = regexArray[i];
 
     if (!regex.test(processedInputArray[i])) {
-      return false;
+      return -i;
     }
   }
 
-  return true;
+  return 1;
 }
 
 function escapeHtml(input) {

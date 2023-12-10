@@ -158,11 +158,16 @@ async function updatePrinterInfo() {
   );
   console.log(valid);
 
-  if (!valid) {
-    showToast("failToast", "Thông tin không hợp lệ");
+  if (valid == -1) {
+    showToast(
+      "failToast",
+      "Thông tin ngày mua không đúng định dạng yyyy-mm-dd"
+    );
+    return;
+  } else if (valid == -3) {
+    showToast("failToast", "Hệ thống chưa có mã cấu hình này");
     return;
   }
-
   try {
     let id = $("#printer_id").text();
     console.log(id);
@@ -193,10 +198,10 @@ async function updatePrinterInfo() {
     $("#editmode").click();
     updateInfo();
     $(".changable>input").css("color", "black");
-    showToast("successToast", "Máy in đã được cập nhật thông tin");
+    showToast("successToast", "Máy tinh đã được cập nhật thông tin");
   } catch (err) {
     console.log(err);
-    showToast("failToast", "Có lỗi xảy ra");
+    showToast("failToast", "Khu vực này không tồn tại");
   }
 }
 

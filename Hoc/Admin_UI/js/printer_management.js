@@ -138,10 +138,6 @@ async function toggleStatus(id) {
 }
 
 async function deletePrinter(id) {
-  if ($(`#status${id}`).hasClass("enable")) {
-    showToast("failToast", "Máy in đang hoạt động");
-    return;
-  }
   try {
     $.ajax(`http://localhost:3001/printers/${id}`, {
       method: "DELETE",
@@ -152,7 +148,7 @@ async function deletePrinter(id) {
         );
       },
       success: async (msg) => {
-        showToast("successToast", "Máy in đã được xóa");
+        showToast("successToast", "Máy tính đã được xóa");
 
         // Remove printer from global list
         printers = printers.filter((element) => element.ID !== id);
@@ -163,10 +159,11 @@ async function deletePrinter(id) {
 
         // Display list of printers again
         displayPrinterInfo();
+        location.reload();
       },
     });
   } catch (error) {
-    showToast("failToast", "Xóa máy in không thành công");
+    showToast("failToast", "Xóa máy tính không thành công");
   }
 }
 
@@ -241,8 +238,14 @@ function createPrinter(e) {
     totalSessions
   );
   console.log(valid);
-  if (!valid) {
-    showToast("failToast", "Thông tin không hợp lệ");
+  if (valid == -1) {
+    showToast(
+      "failToast",
+      "Thông tin ngày mua không đúng định dạng yyyy-mm-dd"
+    );
+    return;
+  } else if (valid == -3) {
+    showToast("failToast", "Hệ thống chưa có mã cấu hình này");
     return;
   } else {
     $.ajax("http://localhost:3001/printers/", {
@@ -258,7 +261,7 @@ function createPrinter(e) {
       success: async function (msg) {
         console.log(msg);
         if (msg.message == "Computer added successfully") {
-          showToast("successToast", "Thêm máy in thành công");
+          showToast("successToast", "Thêm máy tính thành công");
           $("tbody").html("");
           $(".cancel-form").click();
           await getPrinterInfo();
@@ -267,11 +270,11 @@ function createPrinter(e) {
           displayGeneralInfo();
         } else {
           console.log(fail);
-          showToast("failToast", "Thêm máy in thấy bại");
+          showToast("failToast", "Thêm máy tính thấy bại");
         }
       },
       error: function () {
-        showToast("failToast", "Thêm máy in thất bại");
+        showToast("failToast", "Chưa có khu vực này!");
       },
     });
   }
