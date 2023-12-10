@@ -11,3 +11,9 @@ Dr. Nguyen Thi Ai Thao
 - Do Tin Nghia - 2111837
 - Huynh Thai Hoc - 2113443
 - Ta Dinh Tien - 2110583
+## Installation Guide
+1. **Clone the repository from GitHub:**
+git clone https://github.com/nghiado06082003/Database_Assignment.git
+2. **Default Database Connection:**
+- Username: root
+- Password: 1234
