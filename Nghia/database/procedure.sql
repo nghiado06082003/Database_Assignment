@@ -692,31 +692,45 @@ END //
 
 DELIMITER ;
 
+DELIMITER //
 
--- DELIMITER //
--- CREATE PROCEDURE addProductToBill(
---     IN product_id INT,
---     IN so_luong INT,
---     IN bill_id INT
--- )
--- begin
--- 	DECLARE date_apply datetime;
---     DECLARE muc_giam FLOAT;
---     declare ma_khuyen_mai int;
---     DECLARE thanh_tien INT;
---     DECLARE bill_cost INT;
---     SELECT `ngay thuc hien` INTO date_apply FROM `hoa don` WHERE `ma hoa don` = bill_id;
---     CALL getDiscountForProduct(product_id, so_luong, date_apply,ma_khuyen_mai,muc_giam);
---     SELECT `gia niem yet` INTO thanh_tien FROM `san pham` WHERE `ma san pham` = product_id;
---     SELECT `tong tien` INTO bill_cost FROM `hoa don` WHERE `ma hoa don` = bill_id;
---     IF muc_giam IS NOT NULL THEN
---         SET thanh_tien = (1 - muc_giam) * thanh_tien*so_luong;
---     END IF;
+CREATE PROCEDURE SignInForLeTan(IN p_account VARCHAR(255), IN p_password VARCHAR(255))
 
---     SET bill_cost = bill_cost + thanh_tien;
---     UPDATE `hoa don` SET `tong tien` = bill_cost WHERE `ma hoa don` = bill_id;
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Tai khoan Le Tan khong duoc bo trong';
+    END IF;
+    IF p_password IS NULL OR p_password = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Mat khau khong duoc bo trong';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `password` = p_password;
+END //
 
---     INSERT INTO `chua` (`ma hoa don`, `ma san pham`, `so luong`) VALUES (bill_id, product_id, so_luong);
--- end;
--- //
--- DELIMITER ;
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE AuthorizeLeTan(IN p_id INT, IN p_account VARCHAR(255))
+
+BEGIN
+	IF p_account IS NULL OR p_account = '' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Khong tim thay tai khoan Le Tan trong token xac thuc';
+    END IF;
+    IF p_id IS NULL OR p_id = '' THEN
+        SIGNAL SQLSTATE '45001'
+        SET MESSAGE_TEXT = 'Khong tim thay ID Le Tan trong token xac thuc';
+    END IF;
+    
+    SELECT `ID` AS `employeeID`, `account` FROM `Le Tan` WHERE `account` = p_account AND `ID` = p_id;
+END //
+
+DELIMITER ;
+
+
+
+
+

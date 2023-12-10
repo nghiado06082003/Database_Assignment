@@ -16,7 +16,7 @@ function PrivateRoutes(prop) {
     const [decision, setDecision] = useState(null);
     useEffect(() => {
         if (!token) {
-            setDecision(<Navigate to={"/signin"} />);
+            setDecision(<Navigate to={"/"} />);
         }
         else {
             let url = "/api/authorization/" + prop.validatePermission;
@@ -28,7 +28,8 @@ function PrivateRoutes(prop) {
                 setDecision(<Outlet />);
 
             }).catch((error) => {
-                setDecision(<Navigate to={"/signin"} />);
+                console.log(error.response.data.message);
+                setDecision(<Navigate to={"/"} />);
             });
         }
     }, [])

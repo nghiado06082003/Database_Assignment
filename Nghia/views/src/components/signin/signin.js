@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 function SignIn() {
-  const [email, setEmail] = useState("");
+  const [account, setAccount] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   
@@ -15,8 +15,8 @@ function SignIn() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post("http://localhost:8080/api/signin", {
-        email: email,
+      .post("/api/signin", {
+        account: account,
         password: password,
       })
       .then((response) => {
@@ -26,7 +26,7 @@ function SignIn() {
         setTimeout(() => {
           window.location.reload();
         }, 500);
-        navigate("/");
+        navigate("/member");
       })
       .catch((error) => {
         if (error.response) {
@@ -50,14 +50,14 @@ function SignIn() {
             <div className="col-12">
               <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="mb-3 text-start">
-                  <label htmlFor="email" className="form-label h6">Email</label>
+                  <label htmlFor="account" className="form-label h6">Tài khoản lễ tân</label>
                   <input
-                    type="email"
+                    type="text"
                     className="form-control"
-                    id="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="account"
+                    name="account"
+                    value={account}
+                    onChange={(e) => setAccount(e.target.value)}
                   />
                 </div>
                 <div className="mb-3 text-start">

@@ -15,49 +15,7 @@ export default function Navbar(props) {
   const cookies = new Cookies();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = cookies.get('TOKEN');
-    console.log(`cookies: token=${token}`);
-    if (token === undefined) {
-      setAuthInfo(() => ({ isLogin: false, isAdmin: false, isAdminMode: false }));
-    }
-    else {
-      axios
-        .post('http://localhost:8080/api/authorization/collab', {}, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        .then((response) => {
-          console.log(response.data);
-          setAuthInfo({ isLogin: true, isAdmin: false, isAdminMode: false });
-        })
-        .catch((error) => {
-          console.error(error);
-          setAuthInfo({ isLogin: false, isAdmin: false, isAdminMode: false });
-        });
-
-      axios
-        .post('http://localhost:8080/api/authorization/admin', {}, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
-        .then((response) => {
-          console.log(response.data);
-          setAuthInfo({ isLogin: true, isAdmin: true, isAdminMode: true });
-        })
-        .catch((error) => {
-
-        });
-    }
-  }, []);
-
   const handleSignOut = (e) => {
-    if (!authInfo.isLogin) {
-      alert('Có lỗi xảy ra!');
-      return;
-    }
     cookies.remove('TOKEN', {
       path: "/",
     });
@@ -187,6 +145,9 @@ export default function Navbar(props) {
             {navItem3}
             {navItem4}
           </ul>
+          <button type="submit" className="btn btn-primary" onClick={handleSignOut}>
+            Đăng xuất
+          </button>
         </div>
       </div>
     </nav>

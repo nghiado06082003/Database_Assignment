@@ -2,6 +2,11 @@ const bill_model = require('../model/bill');
 
 module.exports = {
     getProduct: function (req, res) {
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.productName)) {
+            res.status(400).json({ message: "Vui lòng không để trống tên sản phẩm cần tìm" });
+            return;
+        }
         bill_model.getProduct(req.body.productName, function (err, result) {
             if (err) {
                 res.status(500).json({ message: err.message })
@@ -12,6 +17,15 @@ module.exports = {
         })
     },
     createBill: function (req, res) {
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.memberId)) {
+            res.status(400).json({ message: "Vui lòng không để trống tài khoản hội viên" });
+            return;
+        };
+        if (isEmpty(req.body.employeeId)) {
+            res.status(400).json({ message: "Vui lòng không để trống ID lễ tân" });
+            return;
+        }
         let billInfo = {
             memberId: req.body.memberId,
             employeeId: req.body.employeeId

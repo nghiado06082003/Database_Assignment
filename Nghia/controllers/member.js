@@ -13,7 +13,21 @@ module.exports = {
         })
     },
     memberAdd: function (req, res) {
-        if (req.body.password) {
+        const containsOnlyNumbers = (value) => /^\d+$/.test(value);
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.account)) {
+            res.status(400).json({ message: 'Không được để trống tài khoản hội viên' });
+        } else if (isEmpty(req.body.password)) {
+            res.status(400).json({ message: 'Không được để trống mật khẩu hội viên' });
+        } else if (isEmpty(req.body.name)) {
+            res.status(400).json({ message: 'Không được để trống tên hội viên' });
+        } else if (isEmpty(req.body.email)) {
+            res.status(400).json({ message: 'Không được để trống email' });
+        } else if (isEmpty(req.body.phoneNumber)) {
+            res.status(400).json({ message: 'Không được để trống số diện thoại hội viên' });
+        } else if (!containsOnlyNumbers(req.body.phoneNumber)) {
+            res.status(400).json({ message: 'Số điện thoại chỉ được chứa ký tự số' });
+        } else {
             bcrypt.hash(req.body.password, 10)
                 .then((hashedPassword) => {
                     let member = {
@@ -35,9 +49,6 @@ module.exports = {
                 .catch((error) => {
                     res.status(500).json({ message: "Hệ thống gặp vấn đề. Vui lòng thử lại sau" });
                 })
-        }
-        else {
-            res.status(400).json({ message: "Vui lòng không để trống trường nào!" });
         }
 
     }

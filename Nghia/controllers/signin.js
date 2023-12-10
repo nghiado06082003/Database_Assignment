@@ -2,15 +2,20 @@ var authentication_model = require("../model/authentication")
 
 module.exports = {
   signin: function (req, res) {
+    const isEmpty = (value) => value == null || value == undefined || value == '';
+    if (isEmpty(req.body.account)) {
+      res.status(400).json({ message: "Vui lòng không bỏ trống tài khoản đăng nhập" });
+      return;
+    }
+    if (isEmpty(req.body.password)) {
+      res.status(400).json({ message: "Vui lòng không bỏ trống mật khẩu đăng nhập" });
+      return;
+    }
     let obj = {
-      email: req.body.email,
+      account: req.body.account,
       password: req.body.password
     };
-    if (authentication_model.checkNoEmpty(obj)) {
-      authentication_model.signin(res, obj);
-    }
-    else {
-      res.status(400).json({ message: "Vui lòng không bỏ trống bất kỳ trường thông tin đăng nhập nào" });
-    }
+    authentication_model.signin(res, obj);
+
   }
 }

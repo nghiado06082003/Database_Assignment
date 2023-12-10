@@ -2,6 +2,11 @@ const otherServices_model = require('../model/otherServices');
 
 module.exports = {
     getComputerPrice: function (req, res) {
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.computerId)) {
+            res.status(400).json({ message: "Không được để trống mã máy tính cần tìm" });
+            return;
+        }
         otherServices_model.getComputerPrice(req.body.computerId, function (err, result) {
             if (err) {
                 res.status(500).json({ message: err.message })
@@ -24,6 +29,11 @@ module.exports = {
         })
     },
     sessionSearchByMember: function (req, res) {
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.memberId)) {
+            res.status(400).json({ message: "Không được để trống tài khoản hội viên cần tìm" });
+            return;
+        }
         otherServices_model.sessionSearchByMember(req.body.memberId, function (err, result) {
             if (err) {
                 res.status(500).json({ message: err.message })
@@ -34,6 +44,11 @@ module.exports = {
         })
     },
     sessionSearchByComputer: function (req, res) {
+        const isEmpty = (value) => value == null || value == undefined || value == '';
+        if (isEmpty(req.body.computerId)) {
+            res.status(400).json({ message: "Không được để trống mã máy tính cần tìm" });
+            return;
+        }
         otherServices_model.sessionSearchByComputer(req.body.computerId, function (err, result) {
             if (err) {
                 res.status(500).json({ message: err.message })
